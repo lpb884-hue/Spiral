@@ -49,7 +49,7 @@ function drawPlume(seed, radiusScale, alphaScale) {
   const maxDim = Math.max(width, height);
   const cx = width * (0.5 + Math.sin(time * 0.000034 + seed * 1.9) * 0.42);
   const cy = height * (0.5 + Math.cos(time * 0.00003 + seed * 1.4) * 0.38);
-  const baseRadius = maxDim * radiusScale * 0.55;
+  const baseRadius = maxDim * radiusScale * 0.4;
   const points = [];
   const segments = 28;
 
@@ -96,14 +96,14 @@ function drawGrain() {
 
 function drawAmbientGradient() {
   drawBackground();
-  drawPlume(0.1, 0.23, 0.9);
-  drawPlume(0.8, 0.18, 0.66);
-  drawPlume(1.3, 0.21, 0.78);
-  drawPlume(2.1, 0.19, 0.7);
-  drawPlume(2.6, 0.17, 0.64);
-  drawPlume(3.2, 0.23, 0.74);
-  drawPlume(3.9, 0.18, 0.64);
-  drawPlume(4.6, 0.2, 0.62);
+  drawPlume(0.1, 0.16, 0.84);
+  drawPlume(0.8, 0.13, 0.62);
+  drawPlume(1.3, 0.15, 0.72);
+  drawPlume(2.1, 0.14, 0.66);
+  drawPlume(2.6, 0.12, 0.6);
+  drawPlume(3.2, 0.16, 0.7);
+  drawPlume(3.9, 0.13, 0.6);
+  drawPlume(4.6, 0.15, 0.58);
   drawGrain();
 }
 
