@@ -4,16 +4,20 @@ const ctx = canvas.getContext("2d");
 let width = window.innerWidth;
 let height = window.innerHeight;
 const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+let renderScale = 0.72;
 let time = 0;
 
 function resize() {
   width = window.innerWidth;
   height = window.innerHeight;
-  canvas.width = Math.floor(width * dpr);
-  canvas.height = Math.floor(height * dpr);
+  const maxDim = Math.max(width, height);
+  renderScale = maxDim > 2200 ? 0.58 : maxDim > 1700 ? 0.64 : 0.72;
+  const effectiveDpr = dpr * renderScale;
+  canvas.width = Math.floor(width * effectiveDpr);
+  canvas.height = Math.floor(height * effectiveDpr);
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.setTransform(effectiveDpr, 0, 0, effectiveDpr, 0, 0);
 }
 
 const palette = [
@@ -47,7 +51,7 @@ function drawPlume(seed, radiusScale, alphaScale) {
   const cy = height * (0.5 + Math.cos(time * 0.00003 + seed * 1.4) * 0.38);
   const baseRadius = maxDim * radiusScale * 0.55;
   const points = [];
-  const segments = 36;
+  const segments = 28;
 
   for (let i = 0; i <= segments; i += 1) {
     const t = i / segments;
@@ -62,11 +66,11 @@ function drawPlume(seed, radiusScale, alphaScale) {
 
   ctx.globalCompositeOperation = "source-over";
   ctx.filter = "blur(14px)";
-  for (let i = 0; i < points.length; i += 2) {
+  for (let i = 0; i < points.length; i += 3) {
     const p = points[i];
     const t = i / points.length;
     const shift = time * 0.000075 + seed * 0.27 + t * 0.7;
-    const r = baseRadius * (0.82 - t * 0.38);
+    const r = baseRadius * (0.72 - t * 0.3);
     const grad = ctx.createRadialGradient(p.x, p.y, r * 0.08, p.x, p.y, r);
     grad.addColorStop(0, colorAt(shift + 0.03, 0.34 * alphaScale));
     grad.addColorStop(0.5, colorAt(shift + 0.35, 0.2 * alphaScale));
@@ -92,16 +96,14 @@ function drawGrain() {
 
 function drawAmbientGradient() {
   drawBackground();
-  drawPlume(0.1, 0.24, 0.92);
-  drawPlume(0.8, 0.19, 0.68);
-  drawPlume(1.3, 0.22, 0.8);
-  drawPlume(2.1, 0.2, 0.72);
-  drawPlume(2.6, 0.18, 0.68);
-  drawPlume(3.2, 0.24, 0.76);
-  drawPlume(3.7, 0.19, 0.66);
-  drawPlume(4.1, 0.21, 0.68);
-  drawPlume(4.8, 0.17, 0.6);
-  drawPlume(5.4, 0.2, 0.62);
+  drawPlume(0.1, 0.23, 0.9);
+  drawPlume(0.8, 0.18, 0.66);
+  drawPlume(1.3, 0.21, 0.78);
+  drawPlume(2.1, 0.19, 0.7);
+  drawPlume(2.6, 0.17, 0.64);
+  drawPlume(3.2, 0.23, 0.74);
+  drawPlume(3.9, 0.18, 0.64);
+  drawPlume(4.6, 0.2, 0.62);
   drawGrain();
 }
 
