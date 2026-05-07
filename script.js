@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 let width = window.innerWidth;
 let height = window.innerHeight;
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 let time = 0;
 
 function resize() {
@@ -47,7 +47,7 @@ function drawPlume(seed, radiusScale, alphaScale) {
   const cy = height * (0.5 + Math.cos(time * 0.00003 + seed * 1.4) * 0.38);
   const baseRadius = maxDim * radiusScale * 0.55;
   const points = [];
-  const segments = 52;
+  const segments = 36;
 
   for (let i = 0; i <= segments; i += 1) {
     const t = i / segments;
@@ -61,12 +61,12 @@ function drawPlume(seed, radiusScale, alphaScale) {
   }
 
   ctx.globalCompositeOperation = "source-over";
-  ctx.filter = "blur(18px)";
-  for (let i = 0; i < points.length; i += 1) {
+  ctx.filter = "blur(14px)";
+  for (let i = 0; i < points.length; i += 2) {
     const p = points[i];
     const t = i / points.length;
     const shift = time * 0.000075 + seed * 0.27 + t * 0.7;
-    const r = baseRadius * (0.9 - t * 0.45);
+    const r = baseRadius * (0.82 - t * 0.38);
     const grad = ctx.createRadialGradient(p.x, p.y, r * 0.08, p.x, p.y, r);
     grad.addColorStop(0, colorAt(shift + 0.03, 0.34 * alphaScale));
     grad.addColorStop(0.5, colorAt(shift + 0.35, 0.2 * alphaScale));
@@ -81,8 +81,8 @@ function drawPlume(seed, radiusScale, alphaScale) {
 
 function drawGrain() {
   ctx.globalCompositeOperation = "source-over";
-  ctx.fillStyle = "rgba(255, 255, 255, 0.03)";
-  for (let i = 0; i < 110; i += 1) {
+  ctx.fillStyle = "rgba(255, 255, 255, 0.02)";
+  for (let i = 0; i < 60; i += 1) {
     const x = (Math.sin(i * 31.7 + time * 0.0012) * 0.5 + 0.5) * width;
     const y = (Math.cos(i * 27.1 + time * 0.0014) * 0.5 + 0.5) * height;
     const size = 1 + (i % 2);
