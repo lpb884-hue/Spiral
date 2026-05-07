@@ -10,13 +10,6 @@ let activeBlob = null;
 let activePointerId = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
-const cursorBlob = {
-  x: width * 0.5,
-  y: height * 0.5,
-  targetX: width * 0.5,
-  targetY: height * 0.5,
-  active: false
-};
 
 function resize() {
   width = window.innerWidth;
@@ -64,7 +57,15 @@ const blobs = [
   { seed: 2.6, radiusScale: 0.12, alphaScale: 0.6, orbitX: 0.42, orbitY: 0.38, speedX: 0.000034, speedY: 0.00003, offsetX: 0, offsetY: 0, lastRadius: 0 },
   { seed: 3.2, radiusScale: 0.16, alphaScale: 0.7, orbitX: 0.42, orbitY: 0.38, speedX: 0.000034, speedY: 0.00003, offsetX: 0, offsetY: 0, lastRadius: 0 },
   { seed: 3.9, radiusScale: 0.13, alphaScale: 0.6, orbitX: 0.42, orbitY: 0.38, speedX: 0.000034, speedY: 0.00003, offsetX: 0, offsetY: 0, lastRadius: 0 },
-  { seed: 4.6, radiusScale: 0.15, alphaScale: 0.58, orbitX: 0.42, orbitY: 0.38, speedX: 0.000034, speedY: 0.00003, offsetX: 0, offsetY: 0, lastRadius: 0 }
+  { seed: 4.6, radiusScale: 0.15, alphaScale: 0.58, orbitX: 0.42, orbitY: 0.38, speedX: 0.000034, speedY: 0.00003, offsetX: 0, offsetY: 0, lastRadius: 0 },
+  { seed: 5.1, radiusScale: 0.07, alphaScale: 0.5, orbitX: 0.5, orbitY: 0.46, speedX: 0.00004, speedY: 0.000035, offsetX: 0, offsetY: 0, lastRadius: 0 },
+  { seed: 5.8, radiusScale: 0.075, alphaScale: 0.48, orbitX: 0.48, orbitY: 0.44, speedX: 0.000037, speedY: 0.000033, offsetX: 0, offsetY: 0, lastRadius: 0 },
+  { seed: 6.4, radiusScale: 0.068, alphaScale: 0.46, orbitX: 0.52, orbitY: 0.45, speedX: 0.000042, speedY: 0.000036, offsetX: 0, offsetY: 0, lastRadius: 0 },
+  { seed: 7.1, radiusScale: 0.08, alphaScale: 0.5, orbitX: 0.47, orbitY: 0.43, speedX: 0.000039, speedY: 0.000034, offsetX: 0, offsetY: 0, lastRadius: 0 },
+  { seed: 7.7, radiusScale: 0.072, alphaScale: 0.47, orbitX: 0.5, orbitY: 0.47, speedX: 0.000041, speedY: 0.000035, offsetX: 0, offsetY: 0, lastRadius: 0 },
+  { seed: 8.3, radiusScale: 0.066, alphaScale: 0.45, orbitX: 0.49, orbitY: 0.46, speedX: 0.000038, speedY: 0.000032, offsetX: 0, offsetY: 0, lastRadius: 0 },
+  { seed: 8.9, radiusScale: 0.078, alphaScale: 0.49, orbitX: 0.51, orbitY: 0.45, speedX: 0.000043, speedY: 0.000037, offsetX: 0, offsetY: 0, lastRadius: 0 },
+  { seed: 9.5, radiusScale: 0.07, alphaScale: 0.46, orbitX: 0.48, orbitY: 0.44, speedX: 0.00004, speedY: 0.000033, offsetX: 0, offsetY: 0, lastRadius: 0 }
 ];
 
 function getAutoCenter(blob) {
@@ -171,10 +172,6 @@ function onPointerDown(event) {
 
 function onPointerMove(event) {
   const pos = getPointerPos(event);
-  cursorBlob.targetX = pos.x;
-  cursorBlob.targetY = pos.y;
-  cursorBlob.active = true;
-
   if (!activeBlob || event.pointerId !== activePointerId) {
     return;
   }
@@ -194,45 +191,11 @@ function stopDrag(event) {
   activePointerId = null;
 }
 
-function onPointerLeave() {
-  cursorBlob.active = false;
-}
-
-function drawCursorBlob() {
-  const lerp = cursorBlob.active ? 0.35 : 0.08;
-  cursorBlob.x += (cursorBlob.targetX - cursorBlob.x) * lerp;
-  cursorBlob.y += (cursorBlob.targetY - cursorBlob.y) * lerp;
-
-  const maxDim = Math.max(width, height);
-  const radius = maxDim * 0.035;
-  const shift = time * 0.00012;
-  const grad = ctx.createRadialGradient(
-    cursorBlob.x - radius * 0.22,
-    cursorBlob.y - radius * 0.16,
-    radius * 0.08,
-    cursorBlob.x,
-    cursorBlob.y,
-    radius
-  );
-  grad.addColorStop(0, colorAt(shift + 0.18, 0.17));
-  grad.addColorStop(0.5, colorAt(shift + 0.42, 0.09));
-  grad.addColorStop(1, "rgba(0,0,0,0)");
-
-  ctx.globalCompositeOperation = "source-over";
-  ctx.filter = "blur(10px)";
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.arc(cursorBlob.x, cursorBlob.y, radius, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.filter = "none";
-}
-
 function drawAmbientGradient() {
   drawBackground();
   for (const blob of blobs) {
     drawPlume(blob);
   }
-  drawCursorBlob();
   drawGrain();
 }
 
@@ -247,7 +210,6 @@ canvas.addEventListener("pointerdown", onPointerDown);
 canvas.addEventListener("pointermove", onPointerMove);
 canvas.addEventListener("pointerup", stopDrag);
 canvas.addEventListener("pointercancel", stopDrag);
-canvas.addEventListener("pointerleave", onPointerLeave);
 canvas.style.touchAction = "none";
 resize();
 ctx.fillStyle = "rgb(0, 0, 0)";
