@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 let width = window.innerWidth;
 let height = window.innerHeight;
-const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 let renderScale = 0.72;
 let time = 0;
 let activeBlob = null;
@@ -15,7 +15,7 @@ function resize() {
   width = window.innerWidth;
   height = window.innerHeight;
   const maxDim = Math.max(width, height);
-  renderScale = maxDim > 2200 ? 0.58 : maxDim > 1700 ? 0.64 : 0.72;
+  renderScale = maxDim > 2200 ? 0.5 : maxDim > 1700 ? 0.58 : 0.66;
   const effectiveDpr = dpr * renderScale;
   canvas.width = Math.floor(width * effectiveDpr);
   canvas.height = Math.floor(height * effectiveDpr);
@@ -88,7 +88,7 @@ function drawPlume(blob) {
   const { cx, cy, baseRadius } = getBlobState(blob);
   blob.lastRadius = baseRadius;
   const points = [];
-  const segments = 28;
+  const segments = 22;
 
   for (let i = 0; i <= segments; i += 1) {
     const t = i / segments;
@@ -102,12 +102,14 @@ function drawPlume(blob) {
   }
 
   ctx.globalCompositeOperation = "source-over";
-  ctx.filter = "blur(14px)";
-  for (let i = 0; i < points.length; i += 3) {
+  const pointStep = blob.radiusScale < 0.09 ? 5 : 4;
+  const blurPx = blob.radiusScale < 0.09 ? 8 : 11;
+  ctx.filter = `blur(${blurPx}px)`;
+  for (let i = 0; i < points.length; i += pointStep) {
     const p = points[i];
     const t = i / points.length;
     const shift = time * 0.000075 + blob.seed * 0.27 + t * 0.7;
-    const r = baseRadius * (0.72 - t * 0.3);
+    const r = baseRadius * (0.64 - t * 0.24);
     const grad = ctx.createRadialGradient(p.x, p.y, r * 0.08, p.x, p.y, r);
     grad.addColorStop(0, colorAt(shift + 0.03, 0.34 * blob.alphaScale));
     grad.addColorStop(0.5, colorAt(shift + 0.35, 0.2 * blob.alphaScale));
@@ -122,11 +124,11 @@ function drawPlume(blob) {
 
 function drawGrain() {
   ctx.globalCompositeOperation = "source-over";
-  ctx.fillStyle = "rgba(255, 255, 255, 0.02)";
-  for (let i = 0; i < 60; i += 1) {
+  ctx.fillStyle = "rgba(255, 255, 255, 0.012)";
+  for (let i = 0; i < 45; i += 1) {
     const x = (Math.sin(i * 31.7 + time * 0.0012) * 0.5 + 0.5) * width;
     const y = (Math.cos(i * 27.1 + time * 0.0014) * 0.5 + 0.5) * height;
-    const size = 1 + (i % 2);
+    const size = 0.6 + (i % 2) * 0.25;
     ctx.fillRect(x, y, size, size);
   }
 }
