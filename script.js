@@ -20,12 +20,34 @@ function resize() {
   ctx.setTransform(effectiveDpr, 0, 0, effectiveDpr, 0, 0);
 }
 
-const palette = [
-  [138, 72, 255],  // violet
-  [80, 170, 255],  // electric blue
-  [255, 108, 70],  // orange
-  [195, 90, 255]   // magenta-violet
+const palettes = [
+  [
+    [138, 72, 255],  // violet
+    [80, 170, 255],  // electric blue
+    [255, 108, 70],  // orange
+    [195, 90, 255]   // magenta-violet
+  ],
+  [
+    [90, 255, 218],  // mint
+    [58, 158, 255],  // azure
+    [184, 124, 255], // lavender
+    [255, 132, 205]  // pink
+  ],
+  [
+    [255, 140, 88],  // coral
+    [255, 82, 168],  // fuchsia
+    [132, 98, 255],  // indigo
+    [84, 205, 255]   // sky
+  ],
+  [
+    [120, 255, 112], // lime
+    [72, 205, 255],  // cyan
+    [120, 120, 255], // soft blue
+    [255, 152, 98]   // warm orange
+  ]
 ];
+let paletteIndex = 0;
+let palette = palettes[paletteIndex];
 
 function colorAt(mix, alpha) {
   const count = palette.length;
@@ -37,6 +59,11 @@ function colorAt(mix, alpha) {
   const g = Math.round(palette[index][1] + (palette[next][1] - palette[index][1]) * localMix);
   const b = Math.round(palette[index][2] + (palette[next][2] - palette[index][2]) * localMix);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function cyclePalette() {
+  paletteIndex = (paletteIndex + 1) % palettes.length;
+  palette = palettes[paletteIndex];
 }
 
 function drawBackground() {
@@ -138,6 +165,7 @@ function tick() {
 }
 
 window.addEventListener("resize", resize);
+canvas.addEventListener("click", cyclePalette);
 resize();
 ctx.fillStyle = "rgb(0, 0, 0)";
 ctx.fillRect(0, 0, width, height);
